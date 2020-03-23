@@ -52,7 +52,29 @@ def show_history():
 print('Verificar se usuario <x> existe no CUCM: \n')
 userCUCM = input('UserID (login): ')
 passwordUSER = input('PASSWORD')
-
+dict_update = {
+    'userid': userCUCM,
+    'password': passwordUSER,
+    'associatedGroups': {
+        'userGroup': [
+            {
+                'name': 'USER_CTI_ALL',
+                'userRoles': {
+                    'userRole': [
+                        'Standard CTI Allow Call Monitoring',
+                        'Standard CTI Allow Call Park Monitoring',
+                        'Standard CTI Allow Call Recording',
+                        'Standard CTI Allow Calling Number Modification',
+                        'Standard CTI Allow Control of All Devices',
+                        'Standard CTI Allow Control of Phones supporting Connected Xfer and conf',
+                        'Standard CTI Enabled',
+                        'Standard CCM End Users'
+                    ]
+                }
+            }
+        ]
+    }
+}
 try:
     # passar userCUCM como variavel
     resp = service.getUser(userid='{}'.format(userCUCM))
@@ -62,9 +84,9 @@ try:
         resetPSWD = input('Deseja resetar a senha? (Y/N): ')
         if (resetPSWD == 'Y' or resetPSWD == 'y'):
             try:
-                updateUSER = service.updateUser(
-                    userid='{}'.format(userCUCM), password=passwordUSER)  # passar userCUCM como variavel
-                print('Senha atualizada: ' + passwordUSER)
+                # passar userCUCM como variavel
+                updateUSER = service.updateUser(**dict_update)
+                print('Permissões Verificadas\nSenha atualizada: ' + passwordUSER)
             except Fault:
                 show_history()
         else:
